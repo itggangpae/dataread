@@ -1,0 +1,44 @@
+name: Java CI with CD
+
+#이벤트: main 브랜치에 push 나 pull_request가 발생하면
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+jobs:
+  build-docker-image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      #JDK 17 설치
+      - name: Set Up JDK17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      #Spring Application 빌드
+      - name: Build With Gradle
+        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+        with:
+          arguments: clean bootjar
+      #DOCKER HUB 로그인
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{secrets.DOCKERHUB_USERNAME}}
+          password: ${{secrets.DOCKERHUB_TOKEN}}
+      #Docker 이미지를 빌드해서 업로드
+      - name: build and release to Docker Hub
+        env:
+          NAME: ${{secrets.DOCKERHUB_USERNAME}}
+          REPO: dataread
+        run: |
+          docker build -t $REPO .
+          docker tag $REPO:latest $NAME/$REPO:latest
+          docker push $NAME/$REPO:latest
+
