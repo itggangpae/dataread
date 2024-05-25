@@ -21,8 +21,9 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-      #Spring Application 빌드
-      - name: Build With Gradle
+
+      # 2. Spring Boot 애플리케이션 빌드
+      - name: Build with Gradle
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
         with:
           arguments: clean bootJar
