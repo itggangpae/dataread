@@ -28,8 +28,8 @@ public class BookController {
                     list.add(doc);
                 }
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception e1) {
+            e1.printStackTrace();
         } finally {
             mongoClient.close();
         }
